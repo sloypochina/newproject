@@ -19,7 +19,6 @@
             min-height: 100vh;
         }
 
-        /* Видео-фон */
         .video-bg {
             position: fixed; inset: 0; z-index: -10;
             width: 100vw; height: 100vh;
@@ -27,16 +26,15 @@
             filter: blur(15px) brightness(0.5);
         }
 
-        /* Статичные цветы на фоне */
-        .static-flower { position: absolute; font-size: 20px; z-index: -5; opacity: 0.4; }
+        .static-flower { position: absolute; font-size: 24px; z-index: -5; opacity: 0.4; }
 
         /* Падающие лепестки */
-        .flower-emoji { position: absolute; pointer-events: none; animation: float linear infinite; font-size: 20px; z-index: 1; }
+        .flower-emoji { position: absolute; pointer-events: none; animation: float linear infinite; font-size: 25px; z-index: 1; }
         @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-        /* Опиумный текст с анимацией наклона */
+        /* Текст с высоким приоритетом (поверх фото) */
         #glitch-text {
-            position: fixed; top: 30%; left: 5%; z-index: 100;
+            position: fixed; top: 30%; left: 5%; z-index: 9999;
             font-size: 4rem; font-weight: 900;
             display: none; 
             animation: blink 0.2s infinite, tilt-anim 3s infinite ease-in-out; 
@@ -45,8 +43,9 @@
         }
         @keyframes blink { 0%, 100% { color: #fff; } 50% { color: #ff00ff; } }
         @keyframes tilt-anim {
-            0%, 100% { transform: rotate(30deg); }
+            0% { transform: rotate(30deg); }
             50% { transform: rotate(-30deg); }
+            100% { transform: rotate(30deg); }
         }
 
         .btn-center {
@@ -56,14 +55,13 @@
         }
         .btn-center:hover { background: #ff69b4; color: black; }
 
-        /* Картинки */
-        .popup-media { position: absolute; width: 300px; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
-        .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 200; display: none; font-weight: bold; }
+        /* Фотографии с ограниченным z-index, чтобы не перекрывать текст */
+        .popup-media { position: absolute; width: 250px; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
+        .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 10000; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Видео фон -->
     <video autoplay muted loop playsinline class="video-bg">
         <source src="img/bg.mp4" type="video/mp4">
     </video>
@@ -80,14 +78,16 @@
     <div id="media-container"></div>
 
     <script>
-        const flowers = ['🌸', '🌷', '🌼', '🌺', '🌹', '🌻'];
+        // Расширенный набор эмодзи
+        const flowersStatic = ['🌸', '🌷', '🌼', '🌺', '🌹', '🌻', '💐', '💮'];
+        const flowersFalling = ['🌸', '💫', '💖', '✨', '🌷', '🎀', '🌹', '🍃'];
 
         // Создаем статичные цветы
         const container = document.getElementById('static-flowers-container');
         for(let i=0; i<40; i++) {
             const f = document.createElement('div');
             f.className = 'static-flower';
-            f.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
+            f.innerHTML = flowersStatic[Math.floor(Math.random()*flowersStatic.length)];
             f.style.left = Math.random()*95 + '%';
             f.style.top = Math.random()*95 + '%';
             container.appendChild(f);
@@ -98,8 +98,8 @@
             document.getElementById('glitch-text').style.display = 'block';
             document.getElementById('close-btn').style.display = 'block';
             
-            // Спам лепестками (интервал 50мс)
-            setInterval(createFallingFlower, 50);
+            // Спам лепестками (чаще)
+            setInterval(createFallingFlower, 80);
             
             // Вывод фото
             spawnMedia('img/photo1.jpg');
@@ -111,7 +111,7 @@
         function createFallingFlower() {
             const el = document.createElement('div');
             el.className = 'flower-emoji';
-            el.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
+            el.innerHTML = flowersFalling[Math.floor(Math.random()*flowersFalling.length)];
             el.style.left = Math.random()*100 + 'vw';
             el.style.animationDuration = (Math.random()*3 + 2) + 's';
             document.body.appendChild(el);
@@ -122,11 +122,11 @@
             const img = document.createElement('img');
             img.src = src;
             img.className = 'popup-media';
-            // Рандомные координаты
             img.style.left = Math.random()*60 + 'vw';
             img.style.top = Math.random()*60 + 'vh';
-            // Рандомный z-index (от 50 до 150)
-            img.style.zIndex = Math.floor(Math.random() * 100) + 50;
+            
+            // z-index от 50 до 9000 (ниже чем 9999 у текста)
+            img.style.zIndex = Math.floor(Math.random() * 8950) + 50;
             img.style.display = 'block';
             document.getElementById('media-container').appendChild(img);
             
