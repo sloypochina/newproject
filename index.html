@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
 
         body { 
-            background: #0a0a0a; 
+            background: #050505; 
             color: white; 
             overflow: hidden; 
             font-family: 'Space Grotesk', sans-serif; 
@@ -19,61 +19,96 @@
             min-height: 100vh;
         }
 
+        /* Видео-фон */
+        .video-bg {
+            position: fixed; inset: 0; z-index: -10;
+            width: 100vw; height: 100vh;
+            object-fit: cover;
+            filter: blur(15px) brightness(0.5);
+        }
+
+        /* Статичные цветы на фоне */
+        .static-flower { position: absolute; font-size: 20px; z-index: -5; opacity: 0.4; }
+
+        /* Падающие лепестки */
         .flower-emoji { position: absolute; pointer-events: none; animation: float linear infinite; font-size: 20px; z-index: 1; }
         @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-        /* Опиумный текст */
+        /* Опиумный текст с анимацией наклона */
         #glitch-text {
-            position: fixed; top: 30%; left: 10%; z-index: 100;
-            font-size: 5rem; font-weight: 900; transform: rotate(-30deg);
-            display: none; animation: blink 0.2s infinite; pointer-events: none;
+            position: fixed; top: 30%; left: 5%; z-index: 100;
+            font-size: 4rem; font-weight: 900;
+            display: none; 
+            animation: blink 0.2s infinite, tilt-anim 3s infinite ease-in-out; 
+            pointer-events: none;
             text-shadow: 5px 5px 0px #ff00ff, -5px -5px 0px #00ffff;
         }
         @keyframes blink { 0%, 100% { color: #fff; } 50% { color: #ff00ff; } }
+        @keyframes tilt-anim {
+            0%, 100% { transform: rotate(30deg); }
+            50% { transform: rotate(-30deg); }
+        }
 
         .btn-center {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            padding: 20px 40px; border: 2px solid #ff69b4; background: rgba(255, 105, 180, 0.1);
-            font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+            padding: 20px 40px; border: 2px solid #ff69b4; background: rgba(255, 105, 180, 0.2);
+            font-size: 1.5rem; cursor: pointer; transition: 0.3s; z-index: 1000;
         }
         .btn-center:hover { background: #ff69b4; color: black; }
 
-        .popup-media { position: absolute; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
-        .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 200; display: none; }
+        /* Картинки */
+        .popup-media { position: absolute; width: 300px; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
+        .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 200; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1 class="text-center text-4xl mt-10 uppercase tracking-widest text-pink-400">Liza s 8 marta epta</h1>
+    <!-- Видео фон -->
+    <video autoplay muted loop playsinline class="video-bg">
+        <source src="img/bg.mp4" type="video/mp4">
+    </video>
+    
+    <div id="static-flowers-container"></div>
 
-    <div id="stars" class="fixed inset-0 z-[-1] opacity-50"></div>
+    <h1 class="text-center text-4xl mt-10 uppercase tracking-widest text-pink-400">Liza s 8 marta epta</h1>
 
     <button id="main-btn" class="btn-center" onclick="startChaos()">с 8 mArata.exe</button>
 
     <div id="glitch-text">СССС 8 МАРТАА БАЛЯЯЯ ЛИЗА ЕПТА'opuim..'</div>
-    <div id="close-x" class="close-btn" onclick="location.reload()">[X]</div>
+    <div id="close-btn" class="close-btn" onclick="location.reload()">[X]</div>
 
-    <!-- Контейнер для медиа -->
     <div id="media-container"></div>
 
     <script>
-        const flowers = ['🌸', '🌷', '🌼', '🌺'];
+        const flowers = ['🌸', '🌷', '🌼', '🌺', '🌹', '🌻'];
+
+        // Создаем статичные цветы
+        const container = document.getElementById('static-flowers-container');
+        for(let i=0; i<40; i++) {
+            const f = document.createElement('div');
+            f.className = 'static-flower';
+            f.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
+            f.style.left = Math.random()*95 + '%';
+            f.style.top = Math.random()*95 + '%';
+            container.appendChild(f);
+        }
 
         function startChaos() {
             document.getElementById('main-btn').style.display = 'none';
             document.getElementById('glitch-text').style.display = 'block';
-            document.getElementById('close-x').style.display = 'block';
+            document.getElementById('close-btn').style.display = 'block';
             
-            // Запуск лепестков
-            setInterval(createFlower, 300);
+            // Спам лепестками (интервал 50мс)
+            setInterval(createFallingFlower, 50);
             
-            // Вывод фото/видео (замени ссылки на свои)
+            // Вывод фото
             spawnMedia('img/photo1.jpg');
             spawnMedia('img/photo2.jpg');
             spawnMedia('img/photo3.jpg');
+            spawnMedia('img/photo4.jpg');
         }
 
-        function createFlower() {
+        function createFallingFlower() {
             const el = document.createElement('div');
             el.className = 'flower-emoji';
             el.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
@@ -87,15 +122,20 @@
             const img = document.createElement('img');
             img.src = src;
             img.className = 'popup-media';
-            img.style.left = Math.random()*70 + 'vw';
-            img.style.top = Math.random()*70 + 'vh';
+            // Рандомные координаты
+            img.style.left = Math.random()*60 + 'vw';
+            img.style.top = Math.random()*60 + 'vh';
+            // Рандомный z-index (от 50 до 150)
+            img.style.zIndex = Math.floor(Math.random() * 100) + 50;
             img.style.display = 'block';
             document.getElementById('media-container').appendChild(img);
             
-            // Глитч эффект
+            // Эффект дерганья
             setInterval(() => {
-                img.style.transform = `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
-            }, 100);
+                if (img.style.display === 'block') {
+                    img.style.transform = `translate(${Math.random()*40-20}px, ${Math.random()*40-20}px) rotate(${Math.random()*10-5}deg)`;
+                }
+            }, 150);
         }
     </script>
 </body>
