@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap');
+
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            overflow: hidden; 
+            font-family: 'Space Grotesk', sans-serif; 
+            margin: 0; 
+            min-height: 100vh;
+        }
+
+        .flower-emoji { position: absolute; pointer-events: none; animation: float linear infinite; font-size: 20px; z-index: 1; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+        /* Опиумный текст */
+        #glitch-text {
+            position: fixed; top: 30%; left: 10%; z-index: 100;
+            font-size: 5rem; font-weight: 900; transform: rotate(-30deg);
+            display: none; animation: blink 0.2s infinite; pointer-events: none;
+            text-shadow: 5px 5px 0px #ff00ff, -5px -5px 0px #00ffff;
+        }
+        @keyframes blink { 0%, 100% { color: #fff; } 50% { color: #ff00ff; } }
+
+        .btn-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 20px 40px; border: 2px solid #ff69b4; background: rgba(255, 105, 180, 0.1);
+            font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-center:hover { background: #ff69b4; color: black; }
+
+        .popup-media { position: absolute; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
+        .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 200; display: none; }
+    </style>
+</head>
+<body>
+
+    <h1 class="text-center text-4xl mt-10 uppercase tracking-widest text-pink-400">Liza s 8 marta epta</h1>
+
+    <div id="stars" class="fixed inset-0 z-[-1] opacity-50"></div>
+
+    <button id="main-btn" class="btn-center" onclick="startChaos()">с 8 mArata.exe</button>
+
+    <div id="glitch-text">СССС 8 МАРТАА БАЛЯЯЯ ЛИЗА ЕПТА'opuim..'</div>
+    <div id="close-x" class="close-btn" onclick="location.reload()">[X]</div>
+
+    <!-- Контейнер для медиа -->
+    <div id="media-container"></div>
+
+    <script>
+        const flowers = ['🌸', '🌷', '🌼', '🌺'];
+
+        function startChaos() {
+            document.getElementById('main-btn').style.display = 'none';
+            document.getElementById('glitch-text').style.display = 'block';
+            document.getElementById('close-x').style.display = 'block';
+            
+            // Запуск лепестков
+            setInterval(createFlower, 300);
+            
+            // Вывод фото/видео (замени ссылки на свои)
+            spawnMedia('photo1.jpg');
+            spawnMedia('photo2.jpg');
+            spawnMedia('photo3.jpg');
+        }
+
+        function createFlower() {
+            const el = document.createElement('div');
+            el.className = 'flower-emoji';
+            el.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
+            el.style.left = Math.random()*100 + 'vw';
+            el.style.animationDuration = (Math.random()*3 + 2) + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 5000);
+        }
+
+        function spawnMedia(src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'popup-media';
+            img.style.left = Math.random()*70 + 'vw';
+            img.style.top = Math.random()*70 + 'vh';
+            img.style.display = 'block';
+            document.getElementById('media-container').appendChild(img);
+            
+            // Глитч эффект
+            setInterval(() => {
+                img.style.transform = `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
+            }, 100);
+        }
+    </script>
+</body>
+</html>
