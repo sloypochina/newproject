@@ -32,7 +32,7 @@
         .flower-emoji { position: absolute; pointer-events: none; animation: float linear infinite; font-size: 25px; z-index: 1; }
         @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
 
-        /* Текст с высоким приоритетом (поверх фото) */
+        /* Текст с высоким приоритетом */
         #glitch-text {
             position: fixed; top: 30%; left: 5%; z-index: 9999;
             font-size: 4rem; font-weight: 900;
@@ -55,7 +55,7 @@
         }
         .btn-center:hover { background: #ff69b4; color: black; }
 
-        /* Фотографии с ограниченным z-index, чтобы не перекрывать текст */
+        /* Фотографии */
         .popup-media { position: absolute; width: 250px; border: 2px solid white; box-shadow: 0 0 20px red; display: none; z-index: 50; }
         .close-btn { position: fixed; top: 20px; right: 20px; font-size: 50px; color: red; cursor: pointer; z-index: 10000; display: none; font-weight: bold; }
     </style>
@@ -65,6 +65,11 @@
     <video autoplay muted loop playsinline class="video-bg">
         <source src="img/bg.mp4" type="video/mp4">
     </video>
+
+    <!-- Скрытый плеер -->
+    <audio id="bg-music" loop>
+        <source src="audio/music.m4a" type="audio/mp4">
+    </audio>
     
     <div id="static-flowers-container"></div>
 
@@ -78,11 +83,9 @@
     <div id="media-container"></div>
 
     <script>
-        // Расширенный набор эмодзи
         const flowersStatic = ['🌸', '🌷', '🌼', '🌺', '🌹', '🌻', '💐', '💮'];
         const flowersFalling = ['🌸', '💫', '💖', '✨', '🌷', '🎀', '🌹', '🍃'];
 
-        // Создаем статичные цветы
         const container = document.getElementById('static-flowers-container');
         for(let i=0; i<40; i++) {
             const f = document.createElement('div');
@@ -98,7 +101,12 @@
             document.getElementById('glitch-text').style.display = 'block';
             document.getElementById('close-btn').style.display = 'block';
             
-            // Спам лепестками (чаще)
+            // Запуск музыки
+            const music = document.getElementById('bg-music');
+            music.volume = 0.5; // Громкость
+            music.play();
+            
+            // Спам лепестками
             setInterval(createFallingFlower, 80);
             
             // Вывод фото
@@ -129,12 +137,11 @@
             img.style.left = Math.random()*60 + 'vw';
             img.style.top = Math.random()*60 + 'vh';
             
-            // z-index от 50 до 9000 (ниже чем 9999 у текста)
+            // z-index до 9000
             img.style.zIndex = Math.floor(Math.random() * 8950) + 50;
             img.style.display = 'block';
             document.getElementById('media-container').appendChild(img);
             
-            // Эффект дерганья
             setInterval(() => {
                 if (img.style.display === 'block') {
                     img.style.transform = `translate(${Math.random()*40-20}px, ${Math.random()*40-20}px) rotate(${Math.random()*10-5}deg)`;
